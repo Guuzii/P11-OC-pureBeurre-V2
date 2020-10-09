@@ -21,6 +21,9 @@ from products.models import (
 )
 from products.forms import SearchForm, UserCreateForm, LoginForm
 
+from comments.models import Comment
+from comments.forms import CommentForm
+
 # Create your views here.
 class HomeView(View):
     template_name = "products/homepage.html"
@@ -156,6 +159,11 @@ class ProductDetails(View):
                 }
             )
 
+        if request.user.is_authenticated:
+            product_comments = Comment.objects.filter(product_id=product_id, is_validated=True).order_by('-date')
+            self.context['comments'] = product_comments
+            self.context['comment_form'] = CommentForm(initial={'user': request.user, 'product': searched_product})
+        
         self.context["title"] = searched_product.name
         self.context["searched_product"] = searched_product
         self.context["product_nutriments"] = clean_nutriments

@@ -24,4 +24,5 @@ urlpatterns = [
         views.ProductDetails.as_view(),
         name="product-details",
     ),
+    path("post-comment/", include("comments.urls")),
 ]
