@@ -5,5 +5,5 @@ from . import views
 from products.views import HomeView
 
 urlpatterns = [
-    path("/<int:product_id>", views.Comments.as_view(), name="post-comment"),
+    path("<int:product_id>", views.Comments.as_view(), name="post-comment"),
 ]

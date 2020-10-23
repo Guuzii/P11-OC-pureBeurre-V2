@@ -132,17 +132,29 @@ footer p {
     justify-content: space-between;
 }
 
-#save-product-message {
+#save-product-message, .messages {
     position: fixed; 
     bottom: 0; 
     z-index: 10000; 
     color: rgba(255, 255, 255, 0.75); 
     font-weight: 600; 
-    font-size: 20px; 
+    font-size: 20px;
     width: 100%; 
-    height: 40px; 
+    padding: 0.3em;
     background-color: #c45525;
     text-align: center;
     display: none;
+}
+
+.messages {
+    display: block;
+}
+
+.close-messages {
+    float: right;
+}
+
+.close-messages:hover {
+    cursor: pointer;
 }
 

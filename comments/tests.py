@@ -15,3 +15,6 @@ class ModelsTest(TestCase):
         self.assertEqual(str(self.test_product), self.test_product.name)
         self.assertEqual(str(self.test_category), self.test_category.name)
         self.assertEqual(str(self.test_nutriment), self.test_nutriment.name)
+
+# test view
+# test post comment selenium
