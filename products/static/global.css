@@ -158,3 +158,33 @@ footer p {
     cursor: pointer;
 }
 
+#product-comments h4 {
+    text-align: center;
+}
+
+.comment-card {
+    border: solid 3px #df6531;
+    padding: .5em;
+    border-radius: 1em;
+    background: linear-gradient(rgba(52, 90, 97, 0.4) 0%, rgba(92, 77, 66, 0.4) 100%);
+    margin-bottom: .5em;
+}
+
+.comment-card div {
+    display: flex;
+    justify-content: space-between;
+}
+
+.comment-author {
+    font-weight: 600;
+}
+
+.comment-date {
+    font-weight: 300;
+    font-size: .8em;
+    font-style: italic;
+}
+
+.comment-message {
+    margin-left: 1em;
+}
