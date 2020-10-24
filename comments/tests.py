@@ -4,7 +4,11 @@ from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout, get_user
 from django.contrib.auth.models import User
 
-from products.models import Product
+from products.models import (
+    Product,
+    Nutriment,
+    ProductNutriments,
+)
 
 from comments.models import Comment
 
@@ -36,7 +40,7 @@ class ProductDetailsPageComments(TestCase):
             username="testuser", password="test123+", email="test@test.fr"
         )
         self.test_product = Product.objects.create(
-            name="Produit test 2", url="test.fr", nutri_score="1"
+            name="Produit test 2", url="test.fr", nutri_score="c"
         )
         self.test_comment = Comment.objects.create(
             user=self.test_user, product=self.test_product, message="test comment productDetailsPage"
@@ -65,5 +69,30 @@ class ProductDetailsPageComments(TestCase):
         self.assertIsNone(response.context["comment_form"])
         self.assertIsNone(response.context["comments"])
 
-        
-# test post comment selenium
+
+# test post comment
+class PostCommentTest(TestCase):
+    def setUp(self):
+        self.test_user = User.objects.create_user(
+            username="testuser", password="test123+", email="test@test.fr"
+        )
+        self.test_product = Product.objects.create(
+            name="Produit test 2", url="test.fr", nutri_score="c"
+        )
+        self.test_nutriment = Nutriment.objects.create(name="salt", unit="g")
+        ProductNutriments.objects.create(
+            product=self.test_product, nutriment=self.test_nutriment, quantity=1.5
+        )
+        self.client.login(username="testuser", password="test123+")
+
+    def test_post_new_comment(self):
+        self.client.post(
+            reverse("post-comment", args=[str(self.test_product.id)]), 
+            {"message": "Commentaire Test !",}
+        )
+
+        last_created_comment = Comment.objects.latest("id")
+        self.assertEqual(last_created_comment.user.id, self.test_user.id)
+        self.assertEqual(last_created_comment.product.id, self.test_product.id)        
+        self.assertEqual(last_created_comment.message, "Commentaire Test !")
+        self.assertEqual(last_created_comment.is_validated, False)

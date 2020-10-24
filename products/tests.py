@@ -1,10 +1,23 @@
-from django.test import TestCase
+from django.test import TestCase, LiveServerTestCase
 from unittest.mock import Mock, patch
 from django.urls import reverse
 
-from django.contrib.auth import authenticate, login, logout
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+
+from django.contrib.auth import (
+    authenticate, 
+    login, 
+    logout, 
+    get_user, 
+    SESSION_KEY, 
+    BACKEND_SESSION_KEY, 
+    HASH_SESSION_KEY
+)
+from django.contrib.sessions.backends.db import SessionStore
 from django.contrib.auth.models import User
 from django.core.management import call_command
+from django.conf import settings
 
 from products.models import (
     Category,
@@ -261,13 +274,7 @@ class UserLoginPage(TestCase):
         response = self.client.post(
             reverse("login"), {"username": "testuser", "password": "test123"}
         )
-
-        # self.assertFormError(
-        #     response=response,
-        #     form=response.context['form'],
-        #     field=response.context['form']['password'],
-        #     errors=response.context['form'].errors['__all__']
-        # )
+        
         self.assertIsNotNone(response.context["form"].errors)
         self.assertFalse(response.context["user"].is_authenticated)
 
@@ -356,3 +363,80 @@ class CommandTest(TestCase):
         
         self.assertIsNotNone(response)
         self.assertTrue(mock_get.called)
+
+
+# User action test using Selenium
+class UserLoginLogoutSeleniumTest(LiveServerTestCase):
+    def setUp(self):
+        self.test_user = User.objects.create_user(
+            username="testuser", password="test123+", email="test@test.fr"
+        )
+        self.selenium = webdriver.Firefox()
+        super(UserLoginLogoutSeleniumTest, self).setUp()
+
+    def tearDown(self):
+        self.selenium.quit()
+        super(UserLoginLogoutSeleniumTest, self).tearDown()
+
+    def test_selenium_login(self):
+        selenium = self.selenium
+
+        selenium.get('%s%s' % (self.live_server_url, '/products/user/login/'))
+        username = selenium.find_element_by_id('id_username')
+        pwd = selenium.find_element_by_id('id_password')
+
+        login_submit = selenium.find_element_by_id('user-login-button')
+
+        username.send_keys('testuser')
+        pwd.send_keys('test123+')
+
+        login_submit.send_keys(Keys.RETURN)
+
+        cookies = selenium.get_cookies()
+
+        self.assertTrue(len(cookies) > 0)
+
+    def test_selenium_user_view(self):
+        session_cookie = self.create_session()
+
+        selenium = self.selenium
+        selenium.get(self.live_server_url)
+
+        selenium.add_cookie(session_cookie)
+        selenium.refresh()
+
+        selenium.get('%s%s' % (self.live_server_url, '/products/user/'))
+
+        self.assertIsNotNone(selenium.get_cookie('sessionid'))
+        self.assertIn('Votre identifiant : testuser', selenium.page_source)
+
+    def test_selenium_user_logout(self):
+        session_cookie = self.create_session()
+
+        selenium = self.selenium
+        selenium.get(self.live_server_url)
+
+        selenium.add_cookie(session_cookie)
+        selenium.refresh()
+
+        self.assertIsNotNone(selenium.get_cookie('sessionid'))
+
+        selenium.get('%s%s' % (self.live_server_url, '/products/user/logouuut/'))
+
+        self.assertIsNone(selenium.get_cookie('sessionid'))
+
+    def create_session(self):
+        session = SessionStore()
+        session[SESSION_KEY] = self.test_user.pk
+        session[BACKEND_SESSION_KEY] = settings.AUTHENTICATION_BACKENDS[0]
+        session[HASH_SESSION_KEY] = self.test_user.get_session_auth_hash()
+        session.save()
+
+        cookie = {
+            'name': settings.SESSION_COOKIE_NAME,
+            'value': session.session_key,
+            'secure': False,
+            'path': '/',
+        }
+
+        return cookie
