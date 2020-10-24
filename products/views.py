@@ -163,6 +163,10 @@ class ProductDetails(View):
             product_comments = Comment.objects.filter(product_id=product_id, is_validated=True).order_by('-date')
             self.context['comments'] = product_comments
             self.context['comment_form'] = CommentForm(initial={'user': request.user, 'product': searched_product})
+        else:
+            self.context['comments'] = None
+            self.context['comment_form'] = None
+
         
         self.context["title"] = searched_product.name
         self.context["searched_product"] = searched_product
