@@ -274,7 +274,7 @@ class UserLoginPage(TestCase):
         response = self.client.post(
             reverse("login"), {"username": "testuser", "password": "test123"}
         )
-        
+
         self.assertIsNotNone(response.context["form"].errors)
         self.assertFalse(response.context["user"].is_authenticated)
 
@@ -421,7 +421,7 @@ class UserLoginLogoutSeleniumTest(LiveServerTestCase):
 
         self.assertIsNotNone(selenium.get_cookie('sessionid'))
 
-        selenium.get('%s%s' % (self.live_server_url, '/products/user/logouuut/'))
+        selenium.get('%s%s' % (self.live_server_url, '/products/user/logout/'))
 
         self.assertIsNone(selenium.get_cookie('sessionid'))
 
