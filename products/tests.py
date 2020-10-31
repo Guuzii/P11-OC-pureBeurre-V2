@@ -7,13 +7,13 @@ from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.common.keys import Keys
 
 from django.contrib.auth import (
-    authenticate, 
-    login, 
-    logout, 
-    get_user, 
-    SESSION_KEY, 
-    BACKEND_SESSION_KEY, 
-    HASH_SESSION_KEY
+    authenticate,
+    login,
+    logout,
+    get_user,
+    SESSION_KEY,
+    BACKEND_SESSION_KEY,
+    HASH_SESSION_KEY,
 )
 from django.contrib.sessions.backends.db import SessionStore
 from django.contrib.auth.models import User
@@ -348,20 +348,30 @@ class ModelsTest(TestCase):
 
 # Custom manage.py command database_update
 class CommandTest(TestCase):
-    @patch('products.management.commands.database_update.Command.openfoodfacts_api_get_product')
+    @patch(
+        "products.management.commands.database_update.Command.openfoodfacts_api_get_product"
+    )
     def test_custom_command_database_update(self, mock_get):
-        product = [{
-            'url': 'https://url.test.com',
-            'product_name': "produit test mock",
-            'nutrition_grades_tags': ["c",],
-            'categories_tags': ['test',],
-        }]
+        product = [
+            {
+                "url": "https://url.test.com",
+                "product_name": "produit test mock",
+                "nutrition_grades_tags": [
+                    "c",
+                ],
+                "categories_tags": [
+                    "test",
+                ],
+            }
+        ]
 
         mock_get.return_value = Mock(ok=True)
         mock_get.return_value.json.return_value = product
-        
-        response = database_update.Command.openfoodfacts_api_get_product(self, category="test", number_of_products=1, user_agent="test-agent")
-        
+
+        response = database_update.Command.openfoodfacts_api_get_product(
+            self, category="test", number_of_products=1, user_agent="test-agent"
+        )
+
         self.assertIsNotNone(response)
         self.assertTrue(mock_get.called)
 
@@ -373,7 +383,7 @@ class CommandTest(TestCase):
         ProductNutriments.objects.create(
             product=self.test_product, nutriment=self.test_nutriment, quantity=1.5
         )
-        
+
         self.assertIsNotNone(Product.objects.get(id=self.test_product.id))
 
         database_reset.Command.handle(self)
@@ -399,14 +409,14 @@ class UserLoginLogoutSeleniumTest(LiveServerTestCase):
     def test_selenium_login(self):
         selenium = self.selenium
 
-        selenium.get('%s%s' % (self.live_server_url, '/products/user/login/'))
-        username = selenium.find_element_by_id('id_username')
-        pwd = selenium.find_element_by_id('id_password')
+        selenium.get("%s%s" % (self.live_server_url, "/products/user/login/"))
+        username = selenium.find_element_by_id("id_username")
+        pwd = selenium.find_element_by_id("id_password")
 
-        login_submit = selenium.find_element_by_id('user-login-button')
+        login_submit = selenium.find_element_by_id("user-login-button")
 
-        username.send_keys('testuser')
-        pwd.send_keys('test123+')
+        username.send_keys("testuser")
+        pwd.send_keys("test123+")
 
         login_submit.send_keys(Keys.RETURN)
 
@@ -423,10 +433,10 @@ class UserLoginLogoutSeleniumTest(LiveServerTestCase):
         selenium.add_cookie(session_cookie)
         selenium.refresh()
 
-        selenium.get('%s%s' % (self.live_server_url, '/products/user/'))
+        selenium.get("%s%s" % (self.live_server_url, "/products/user/"))
 
-        self.assertIsNotNone(selenium.get_cookie('sessionid'))
-        self.assertIn('Votre identifiant : testuser', selenium.page_source)
+        self.assertIsNotNone(selenium.get_cookie("sessionid"))
+        self.assertIn("Votre identifiant : testuser", selenium.page_source)
 
     def test_selenium_user_logout(self):
         session_cookie = self.create_session()
@@ -437,11 +447,11 @@ class UserLoginLogoutSeleniumTest(LiveServerTestCase):
         selenium.add_cookie(session_cookie)
         selenium.refresh()
 
-        self.assertIsNotNone(selenium.get_cookie('sessionid'))
+        self.assertIsNotNone(selenium.get_cookie("sessionid"))
 
-        selenium.get('%s%s' % (self.live_server_url, '/products/user/logout/'))
+        selenium.get("%s%s" % (self.live_server_url, "/products/user/logout/"))
 
-        self.assertIsNone(selenium.get_cookie('sessionid'))
+        self.assertIsNone(selenium.get_cookie("sessionid"))
 
     def create_session(self):
         session = SessionStore()
@@ -451,10 +461,10 @@ class UserLoginLogoutSeleniumTest(LiveServerTestCase):
         session.save()
 
         cookie = {
-            'name': settings.SESSION_COOKIE_NAME,
-            'value': session.session_key,
-            'secure': False,
-            'path': '/',
+            "name": settings.SESSION_COOKIE_NAME,
+            "value": session.session_key,
+            "secure": False,
+            "path": "/",
         }
 
         return cookie

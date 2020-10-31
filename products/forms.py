@@ -23,7 +23,9 @@ class SearchForm(forms.Form):
 class UserCreateForm(UserCreationForm):
     first_name = forms.CharField(
         label="Pseudo",
-        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Pseudo"}),
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "Pseudo"}
+        ),
         required=True,
     )
 
@@ -65,8 +67,8 @@ class UserCreateForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
         super(UserCreationForm, self).__init__(*args, **kwargs)
 
-        for fieldname in ['username']:
-            self.fields[fieldname].label = 'Identifiant'
+        for fieldname in ["username"]:
+            self.fields[fieldname].label = "Identifiant"
 
     def clean_email(self):
         email = self.cleaned_data["email"]

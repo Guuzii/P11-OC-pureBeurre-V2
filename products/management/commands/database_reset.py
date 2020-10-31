@@ -22,4 +22,3 @@ class Command(BaseCommand):
         ProductCategories.all().delete()
 
         self.stdout.write("DATABASE RESET FINISHED")
-

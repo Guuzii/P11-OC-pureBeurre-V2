@@ -5,11 +5,9 @@ from django.core.exceptions import ValidationError, NON_FIELD_ERRORS
 
 from .models import Comment
 
+
 class CommentForm(forms.ModelForm):
-    
     class Meta:
         model = Comment
-        fields = ('message',)
-        widgets = {
-            'message': forms.Textarea(attrs={'cols': 60, 'rows': 5})
-        }
+        fields = ("message",)
+        widgets = {"message": forms.Textarea(attrs={"cols": 60, "rows": 5})}

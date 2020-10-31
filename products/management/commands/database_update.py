@@ -55,31 +55,32 @@ class Command(BaseCommand):
         # with open(os.path.join(os.path.dirname(settings.BASE_DIR), 'django_cron.log'), 'a') as log_file:
         #     print("PRODUCTS DATAS UPDATE DONE - {}".format(datetime.now()), file=log_file)
 
-
     def get_products_for_category(self, product_category: str):
         """
-            GET request to open food fact api to get products in a category.
-            For each response, datas are inserted in the database
+        GET request to open food fact api to get products in a category.
+        For each response, datas are inserted in the database
 
-            Parameters:
-                - product_category (str): the name of the category of products to get
+        Parameters:
+            - product_category (str): the name of the category of products to get
         """
 
-        response = self.openfoodfacts_api_get_product(product_category, settings.NB_PRODUCTS_TO_GET, settings.USER_AGENT_OFF)
+        response = self.openfoodfacts_api_get_product(
+            product_category, settings.NB_PRODUCTS_TO_GET, settings.USER_AGENT_OFF
+        )
 
-        if (response is not None):
+        if response is not None:
             for product in response["products"]:
 
                 new_product = Product()
-                
+
                 if Product.objects.filter(url__iexact=product["url"]):
                     continue
                 new_product.url = product["url"]
 
                 # set the image_url of the product
-                if ("image_url" in product):
+                if "image_url" in product:
                     if Product.objects.filter(image_url__iexact=product["image_url"]):
-                        continue                
+                        continue
                     new_product.image_url = product["image_url"]
 
                 # set the name of the product
@@ -131,7 +132,9 @@ class Command(BaseCommand):
                         new_category = new_category.replace("fr:", "")
 
                         if Category.objects.filter(name=new_category):
-                            new_product.categories.add(Category.objects.get(name=new_category))
+                            new_product.categories.add(
+                                Category.objects.get(name=new_category)
+                            )
                         else:
                             continue
                 else:
@@ -145,7 +148,9 @@ class Command(BaseCommand):
                             new_product.nutriments.add(
                                 nutriment,
                                 through_defaults={
-                                    "quantity": product["nutriments"][nutriment.name + "_100g"]
+                                    "quantity": product["nutriments"][
+                                        nutriment.name + "_100g"
+                                    ]
                                 },
                             )
                         else:
@@ -153,8 +158,9 @@ class Command(BaseCommand):
                     else:
                         new_product.nutriments.add(nutriment)
 
-
-    def openfoodfacts_api_get_product(self, category: str, number_of_products: int, user_agent):
+    def openfoodfacts_api_get_product(
+        self, category: str, number_of_products: int, user_agent
+    ):
         request = requests.get(
             "https://fr-en.openfoodfacts.org/cgi/search.pl?search_terms="
             + category
@@ -164,7 +170,7 @@ class Command(BaseCommand):
             headers={"items": user_agent},
         )
 
-        if (request.status_code == 200):
+        if request.status_code == 200:
             return json.loads(request.text)
         else:
             return None

@@ -89,7 +89,7 @@ class SearchResult(View):
     context = {"search_form": SearchForm()}
 
     def post(self, request):
-        """Process the SearchForm form, return the result-search template 
+        """Process the SearchForm form, return the result-search template
         if form is valid, render homepage template with errors context otherwise"""
         form = SearchForm(request.POST)
 
@@ -140,7 +140,7 @@ class ProductDetails(View):
     context = {"search_form": SearchForm()}
 
     def get(self, request, product_id):
-        """Return the product-details template if product exists. 
+        """Return the product-details template if product exists.
         Return 404 otherwise"""
         searched_product = get_object_or_404(Product, id=product_id)
         product_nutriments = searched_product.nutriments.all()
@@ -160,14 +160,17 @@ class ProductDetails(View):
             )
 
         if request.user.is_authenticated:
-            product_comments = Comment.objects.filter(product_id=product_id, is_validated=True).order_by('-date')
-            self.context['comments'] = product_comments
-            self.context['comment_form'] = CommentForm(initial={'user': request.user, 'product': searched_product})
+            product_comments = Comment.objects.filter(
+                product_id=product_id, is_validated=True
+            ).order_by("-date")
+            self.context["comments"] = product_comments
+            self.context["comment_form"] = CommentForm(
+                initial={"user": request.user, "product": searched_product}
+            )
         else:
-            self.context['comments'] = None
-            self.context['comment_form'] = None
+            self.context["comments"] = None
+            self.context["comment_form"] = None
 
-        
         self.context["title"] = searched_product.name
         self.context["searched_product"] = searched_product
         self.context["product_nutriments"] = clean_nutriments
@@ -196,7 +199,7 @@ class UserSaveProduct(View):
     context = {"search_form": SearchForm()}
 
     def get(self, request, product_id):
-        """Create/Delete a relation user-product to save/unsave a product 
+        """Create/Delete a relation user-product to save/unsave a product
         for authenticated user and return appropriate JSON response"""
         product_to_save = Product.objects.get(id=product_id)
 
@@ -227,10 +230,7 @@ class UserSaveProduct(View):
 
 class LegalNotice(View):
     template_name = "products/legal-notice.html"
-    context = {
-        "search_form": SearchForm(),
-        "title": "Mentions légales"
-    }
+    context = {"search_form": SearchForm(), "title": "Mentions légales"}
 
     def get(self, request):
         """Return the homepage template"""
