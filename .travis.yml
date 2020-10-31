@@ -12,6 +12,7 @@ services:
 script:
 - python manage.py test
 before_install:
+  - sudo apt install firefox
   - wget https://github.com/mozilla/geckodriver/releases/download/v0.27.0/geckodriver-v0.27.0-linux64.tar.gz
   - mkdir geckodriver
   - tar -xzf geckodriver-v0.27.0-linux64.tar.gz -C geckodriver
