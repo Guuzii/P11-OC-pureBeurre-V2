@@ -1,0 +1,30 @@
+{% block comments %}
+
+    <section class="page-section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-10">
+                        <h4>Commentaires</h4>
+                        {% if comments|length > 0 %}
+                            {% for comment in comments %}
+                                <div>
+                                    <p>{{comment.user.first_name}} {{comment.user.last_name}}, le {{comment.date|date:'d-m-Y H:i'}}</p>
+                                    <p>{{comment.message}}</p>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div>
+                                <p>Aucun commentaires disponibles. Ecrivez le premier !</p>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="col-md-10">
+                        <h5>Ajouter un commentaire :</h5>
+                        {% include './forms/form-comment.html' %}
+                    </div>
+                </div>
+            </div>
+        </section>
+    
+{% endblock %}

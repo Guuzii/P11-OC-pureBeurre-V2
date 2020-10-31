@@ -16,6 +16,7 @@ psycopg2-binary = "*"
 dj-database-url = "*"
 django-crontab = "*"
 sentry-sdk = "*"
+selenium = "*"
 
 [requires]
 python_version = "3.7"

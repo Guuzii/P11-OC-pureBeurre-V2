@@ -34,6 +34,40 @@
                 </div>
             </div>
         </div>
-    </section> 
+    </section>
+
+    {% if request.user.is_authenticated %}
+        <section class="page-section">
+            <div class="container">
+                <div class="row">
+                    <div id="product-comments" class="col-md-10">
+                        <h4>Commentaires</h4>
+                        <hr class="divider my-4">
+                        {% if comments|length > 0 %}
+                            {% for comment in comments %}
+                                <div class="comment-card">
+                                    <div>
+                                        <p class="comment-author">{{comment.user.first_name}} {{comment.user.last_name}}</p>
+                                        <p class="comment-date">le {{comment.date|date:'d-m-Y à H:i'}}</p>
+                                    </div>
+                                    <p class="comment-message">{{comment.message}}</p>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div>
+                                <p>Aucun commentaires disponibles. Ecrivez le premier !</p>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="col-md-10">
+                        <hr class="divider my-4">
+                        <h5>Ajouter un commentaire :</h5>
+                        {% include './forms/form-comment.html' %}
+                    </div>
+                </div>
+            </div>
+        </section>
+    {% endif %}
 
 {% endblock %}

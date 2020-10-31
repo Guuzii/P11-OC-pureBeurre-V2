@@ -1,0 +1,21 @@
+{% block comment_form %}
+
+<form action="{% url 'post-comment' product_id=searched_product.id %}" method="POST" style="display: flex; flex-direction: column">
+    {% csrf_token %}
+    
+    {{ comment_form.message }}
+
+    <button type="submit" class="btn btn-primary">Envoyer</button>
+
+    {% if errors %}
+        <div class="text-white">
+            {% for key, error in errors %}
+                {% autoescape off %}
+                    <small>{{ error }}</small>
+                {% endautoescape %}
+            {% endfor %}
+        </div>
+    {% endif %}
+</form>
+
+{% endblock %}

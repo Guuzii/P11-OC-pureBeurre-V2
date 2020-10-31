@@ -1,6 +1,12 @@
 {% extends '../base.html' %}
 
-{% block content %}    
+{% block content %}
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="messages">{{ message }} <span class="close-messages"><i class="fas fa-times"></i></span></div>
+        {% endfor %}
+    {% endif %}
 
     <!-- Masthead-->
     <header class="masthead resultHead head" {% if searched_product is None %}style="background: linear-gradient(to bottom, rgba(92, 77, 66, 0.8) 0%, rgba(92, 77, 66, 0.8) 100%);"{% else %}style="background: linear-gradient(to bottom, rgba(92, 77, 66, 0.8) 0%, rgba(92, 77, 66, 0.8) 100%), url('{{ searched_product.image_url }}') !important; background-repeat: no-repeat !important; background-position: 95% !important;"{% endif %}>

@@ -3,6 +3,7 @@
 # Edit at https://www.gitignore.io/?templates=python,windows,visualstudiocode
 
 deploy_key
+geckodriver.log
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
