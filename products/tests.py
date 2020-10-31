@@ -3,6 +3,7 @@ from unittest.mock import Mock, patch
 from django.urls import reverse
 
 from selenium import webdriver
+from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.common.keys import Keys
 
 from django.contrib.auth import (
@@ -386,7 +387,9 @@ class UserLoginLogoutSeleniumTest(LiveServerTestCase):
         self.test_user = User.objects.create_user(
             username="testuser", password="test123+", email="test@test.fr"
         )
-        self.selenium = webdriver.Firefox()
+        options = Options()
+        options.headless = True
+        self.selenium = webdriver.Firefox(options=options)
         super(UserLoginLogoutSeleniumTest, self).setUp()
 
     def tearDown(self):
