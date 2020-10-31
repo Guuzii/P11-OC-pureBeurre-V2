@@ -28,7 +28,7 @@ from products.models import (
     ProductUsers,
 )
 from products.forms import UserCreateForm, LoginForm
-from products.management.commands.database_update import Command
+from products.management.commands import database_update, database_reset
 
 from io import StringIO
 
@@ -359,10 +359,25 @@ class CommandTest(TestCase):
         mock_get.return_value = Mock(ok=True)
         mock_get.return_value.json.return_value = product
         
-        response = Command.openfoodfacts_api_get_product(self, category="test", number_of_products=1, user_agent="test-agent")
+        response = database_update.Command.openfoodfacts_api_get_product(self, category="test", number_of_products=1, user_agent="test-agent")
         
         self.assertIsNotNone(response)
         self.assertTrue(mock_get.called)
+
+    def tex_custom_commend_database_reset(self):
+        self.test_product = Product.objects.create(
+            name="Produit test 2", url="test.fr", nutri_score="c"
+        )
+        self.test_nutriment = Nutriment.objects.create(name="salt", unit="g")
+        ProductNutriments.objects.create(
+            product=self.test_product, nutriment=self.test_nutriment, quantity=1.5
+        )
+        
+        self.assertIsNotNone(Product.objects.get(id=self.test_product.id))
+
+        database_reset.Command.handle(self)
+
+        self.assertIsNone(Product.objects.get(id=self.test_product.id))
 
 
 # User action test using Selenium
