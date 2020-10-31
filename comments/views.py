@@ -17,15 +17,20 @@ class Comments(ProductDetails):
         if request.user.is_authenticated and form.is_valid():
             user = request.user
             product = Product.objects.get(id=product_id)
-            message = form.cleaned_data['message']
+            message = form.cleaned_data["message"]
 
             new_comment = Comment(user=user, product=product, message=message)
             new_comment.save()
-            
-            messages.info(request, "Votre commentaire a bien été envoyé. Il devra être validé par un administrateur avant de s'afficher.")
-            
-            return redirect('product-details', product_id=product_id)
 
-        messages.info(request, "Votre commentaire n'a pas été envoyé car il était vide.")
+            messages.info(
+                request,
+                "Votre commentaire a bien été envoyé. Il devra être validé par un administrateur avant de s'afficher.",
+            )
 
-        return redirect('product-details', product_id=product_id)
+            return redirect("product-details", product_id=product_id)
+
+        messages.info(
+            request, "Votre commentaire n'a pas été envoyé car il était vide."
+        )
+
+        return redirect("product-details", product_id=product_id)

@@ -10,25 +10,54 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('products', '0003_auto_20200525_1250'),
+        ("products", "0003_auto_20200525_1250"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Comment',
+            name="Comment",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('date', models.DateTimeField(auto_now_add=True, verbose_name='Date création')),
-                ('message', models.TextField(verbose_name='Message')),
-                ('is_validated', models.BooleanField(default=False, verbose_name='Validé par admin')),
-                ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='comment', to='products.product')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "date",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Date création"
+                    ),
+                ),
+                ("message", models.TextField(verbose_name="Message")),
+                (
+                    "is_validated",
+                    models.BooleanField(default=False, verbose_name="Validé par admin"),
+                ),
+                (
+                    "product",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="comment",
+                        to="products.product",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Commentaire',
-                'verbose_name_plural': 'Commentaires',
-                'ordering': ['date'],
+                "verbose_name": "Commentaire",
+                "verbose_name_plural": "Commentaires",
+                "ordering": ["date"],
             },
         ),
     ]

@@ -98,9 +98,15 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
-    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",},
-    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",},
-    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",},
+    {
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+    },
 ]
 
 
@@ -127,14 +133,20 @@ STATIC_URL = "/static/"
 # Static files settings
 # PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 # Django crontab
 CRONJOBS = [
     # Test cron job
-    # ('*/1 * * * *', 'django.core.management.call_command', ['database_update'], {}, '>> ' + os.path.join(os.path.dirname(BASE_DIR), 'django_cron_test.log')),    
+    # ('*/1 * * * *', 'django.core.management.call_command', ['database_update'], {}, '>> ' + os.path.join(os.path.dirname(BASE_DIR), 'django_cron_test.log')),
     # Call manage.py custom command every Monday at 2:00 AM and append ouput to specified file
-    ('0 2 * * 1', 'django.core.management.call_command', ['database_update'], {}, '>> ' + os.path.join(os.path.dirname(BASE_DIR), 'django_cron.log')),
+    (
+        "0 2 * * 1",
+        "django.core.management.call_command",
+        ["database_update"],
+        {},
+        ">> " + os.path.join(os.path.dirname(BASE_DIR), "django_cron.log"),
+    ),
 ]
 
 # Open Food Facts API requests variables
@@ -158,4 +170,3 @@ NUTRIMENTS = {
     "sugars": {"name": "sucres", "unit": "g"},
     "salt": {"name": "sel", "unit": "g"},
 }
-

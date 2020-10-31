@@ -24,7 +24,9 @@ class ModelsTest(TestCase):
             name="Produit test", url="test.fr", nutri_score="a"
         )
         self.test_comment = Comment.objects.create(
-            user=self.test_user, product=self.test_product, message="test comment Comment Model"
+            user=self.test_user,
+            product=self.test_product,
+            message="test comment Comment Model",
         )
 
     # test that Comment model return self.message
@@ -43,7 +45,9 @@ class ProductDetailsPageComments(TestCase):
             name="Produit test 2", url="test.fr", nutri_score="c"
         )
         self.test_comment = Comment.objects.create(
-            user=self.test_user, product=self.test_product, message="test comment productDetailsPage"
+            user=self.test_user,
+            product=self.test_product,
+            message="test comment productDetailsPage",
         )
 
     # test comments and form is displayed when user is authenticated
@@ -87,12 +91,14 @@ class PostCommentTest(TestCase):
 
     def test_post_new_comment(self):
         self.client.post(
-            reverse("post-comment", args=[str(self.test_product.id)]), 
-            {"message": "Commentaire Test !",}
+            reverse("post-comment", args=[str(self.test_product.id)]),
+            {
+                "message": "Commentaire Test !",
+            },
         )
 
         last_created_comment = Comment.objects.latest("id")
         self.assertEqual(last_created_comment.user.id, self.test_user.id)
-        self.assertEqual(last_created_comment.product.id, self.test_product.id)        
+        self.assertEqual(last_created_comment.product.id, self.test_product.id)
         self.assertEqual(last_created_comment.message, "Commentaire Test !")
         self.assertEqual(last_created_comment.is_validated, False)
