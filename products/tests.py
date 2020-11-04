@@ -406,65 +406,46 @@ class UserLoginLogoutSeleniumTest(LiveServerTestCase):
         self.selenium.quit()
         super(UserLoginLogoutSeleniumTest, self).tearDown()
 
-    def test_selenium_login(self):
+    def test_selenium_user_login(self):
         selenium = self.selenium
 
         selenium.get("%s%s" % (self.live_server_url, "/products/user/login/"))
+
         username = selenium.find_element_by_id("id_username")
         pwd = selenium.find_element_by_id("id_password")
-
         login_submit = selenium.find_element_by_id("user-login-button")
 
         username.send_keys("testuser")
         pwd.send_keys("test123+")
 
-        login_submit.send_keys(Keys.RETURN)
+        self.assertIsNone(selenium.get_cookie("sessionid")) # assert user is not authenticated
 
-        cookies = selenium.get_cookies()
+        username.send_keys(Keys.RETURN)
+        pwd.send_keys(Keys.RETURN)
 
-        self.assertTrue(len(cookies) > 0)
+        login_submit.click()
 
-    def test_selenium_user_view(self):
-        session_cookie = self.create_session()
-
-        selenium = self.selenium
-        selenium.get(self.live_server_url)
-
-        selenium.add_cookie(session_cookie)
-        selenium.refresh()
+        self.assertIsNotNone(selenium.get_cookie("sessionid")) # assert user is authenticated
 
         selenium.get("%s%s" % (self.live_server_url, "/products/user/"))
 
-        self.assertIsNotNone(selenium.get_cookie("sessionid"))
-        self.assertIn("Votre identifiant : testuser", selenium.page_source)
+        self.assertIn("Votre identifiant : testuser", selenium.page_source) 
 
     def test_selenium_user_logout(self):
-        session_cookie = self.create_session()
+        self.client.login(username="testuser", password="test123+")
+        session_cookie = self.client.cookies['sessionid']
 
         selenium = self.selenium
         selenium.get(self.live_server_url)
 
-        selenium.add_cookie(session_cookie)
+        selenium.add_cookie({'name': 'sessionid', 'value': session_cookie.value, 'secure': False, 'path': '/'})
         selenium.refresh()
 
-        self.assertIsNotNone(selenium.get_cookie("sessionid"))
+        self.assertIsNotNone(selenium.get_cookie("sessionid")) # assert user is authenticated
+
+        selenium.get("%s%s" % (self.live_server_url, "/products/user/"))
+        self.assertIn("Votre identifiant : testuser", selenium.page_source)
 
         selenium.get("%s%s" % (self.live_server_url, "/products/user/logout/"))
 
-        self.assertIsNone(selenium.get_cookie("sessionid"))
-
-    def create_session(self):
-        session = SessionStore()
-        session[SESSION_KEY] = self.test_user.pk
-        session[BACKEND_SESSION_KEY] = settings.AUTHENTICATION_BACKENDS[0]
-        session[HASH_SESSION_KEY] = self.test_user.get_session_auth_hash()
-        session.save()
-
-        cookie = {
-            "name": settings.SESSION_COOKIE_NAME,
-            "value": session.session_key,
-            "secure": False,
-            "path": "/",
-        }
-
-        return cookie
+        self.assertIsNone(selenium.get_cookie("sessionid")) # assert user is not authenticated

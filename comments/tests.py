@@ -62,6 +62,7 @@ class ProductDetailsPageComments(TestCase):
         self.assertIsNotNone(response.context["comment_form"])
         self.assertIsNotNone(response.context["comments"])
 
+    # test comments and form is not displayed when user is not authenticated
     def test_comments_not_displayed_logged_out(self):
         self.client.logout()
         product_id = self.test_product.id
