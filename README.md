@@ -1,4 +1,4 @@
-# Projet-7-GrandPyBot
+# Projet-11-PurBeurre
 
 Web app made with Django that uses OpenFoodFacts API to find substitute to some product through a research by name.
 This programm has been developped for a python course.
